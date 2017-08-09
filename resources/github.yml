@@ -1,0 +1,36 @@
+##
+## @doc 
+##   project builder
+AWSTemplateFormatVersion: '2010-09-09'
+Description: GitHub CodeBuild
+
+Parameters:
+  GithubRepo:
+    Description: Github repository, absolute url (e.g. https://github.com/:user/:repo)
+    Type: String
+
+  Toolchain:
+    Description: Builder toolchain
+    Type: String
+    Default: aws/codebuild/nodejs:4.4.7
+
+Resources:
+
+  ReCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}
+      Description: !Sub ${AWS::StackName}
+      ServiceRole: ci-cd
+      Artifacts:
+        Type: no_artifacts
+      Environment:
+        Type: linuxContainer
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 
+          Ref: Toolchain
+      Source:
+        Location: 
+          Ref: GithubRepo
+        Type: GITHUB
+      TimeoutInMinutes: 10

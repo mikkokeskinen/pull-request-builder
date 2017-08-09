@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk')
-AWS.config.update({ region: 'us-east-1' });
+AWS.config.update({region: process.env.AWS_REGION})
 const codebuild = new AWS.CodeBuild()
 const status = require('./status')
 const promiseRetry = require('promise-retry');
@@ -35,7 +35,7 @@ module.exports.run = (buildId) => {
   }).then(function (build) {
       const buildStatus = statuses[build.buildStatus]
       const buildMessage = `Tests: ${buildStatus}`
-      return status.update(buildStatus, buildMessage, build.sourceVersion, build.id)
+      return status.update(buildStatus, buildMessage, build)
     }, function (err) {
       return err
     })
