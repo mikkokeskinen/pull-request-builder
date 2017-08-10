@@ -23,7 +23,7 @@ module.exports.pull_request = (repo, id) => {
     .promise()
     .then(x => {
       console.log("==> build pending", JSON.stringify(x))
-      return status.update('pending', 'build is running...', x.build)
+      return status.update('pending', '**ci/cd**', x.build)
     })
     .then(x => {
       console.log("==> github status", JSON.stringify(x))
@@ -50,7 +50,7 @@ module.exports.commit = (repo, id) => {
     .promise()
     .then(x => {
         console.log("==> build pending", JSON.stringify(x))
-        return status.update('pending', 'build is running...', x.build)
+        return status.update('pending', '**ci/cd**', x.build)
     })
     .then(x => {
       console.log("==> github status", JSON.stringify(x))

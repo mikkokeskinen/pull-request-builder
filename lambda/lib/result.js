@@ -15,11 +15,17 @@ const statuses = {
 function greenStatus (buildId) {
   return new Promise((resolve, reject) => {
     codebuild.batchGetBuilds({ ids: [ buildId ] }, (err, data) => {
-      var build = data.builds[0]
-      if (build.buildStatus == 'SUCCEEDED' || build.buildStatus == 'FAILED') {
-        resolve(build)
-      } else {
+      if (err)
+      {
+        console.log("==> unable to fetch build", JSON.stringify(err))
         reject(false)
+      } else {
+        var build = data.builds[0]
+        if (build.buildStatus == 'SUCCEEDED' || build.buildStatus == 'FAILED') {
+          resolve(build)
+        } else {
+          reject(false)
+        }
       }
     })
   })
@@ -34,8 +40,7 @@ module.exports.run = (buildId) => {
       .catch(retry);
   }).then(function (build) {
       const buildStatus = statuses[build.buildStatus]
-      const buildMessage = `Tests: ${buildStatus}`
-      return status.update(buildStatus, buildMessage, build)
+      return status.update(buildStatus, '**ci/cd**', build)
     }, function (err) {
       return err
     })

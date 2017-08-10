@@ -9,10 +9,10 @@ Parameters:
     Description: Github repository, absolute url (e.g. https://github.com/:user/:repo)
     Type: String
 
-  Toolchain:
+  CodeBuildImage:
     Description: Builder toolchain
     Type: String
-    Default: aws/codebuild/nodejs:4.4.7
+    Default: aws/codebuild/docker:1.12.1
 
 Resources:
 
@@ -28,7 +28,7 @@ Resources:
         Type: linuxContainer
         ComputeType: BUILD_GENERAL1_SMALL
         Image: 
-          Ref: Toolchain
+          Ref: CodeBuildImage
       Source:
         Location: 
           Ref: GithubRepo

@@ -23,6 +23,9 @@ Outputs:
   SNSTopic:
     Value:
       Ref: ReTopic
+  AwsRegion:
+    Value: !Ref "AWS::Region"
+
 
 Resources:
 
@@ -66,6 +69,21 @@ Resources:
                   - sns:*
                 Resource:
                   - Ref: ReTopic
+              - Effect: Allow
+                Action:
+                  - "ecr:BatchCheckLayerAvailability"
+                  - "ecr:CompleteLayerUpload"
+                  - "ecr:GetAuthorizationToken"
+                  - "ecr:InitiateLayerUpload"
+                  - "ecr:PutImage"
+                  - "ecr:UploadLayerPart"
+                Resource: 
+                  - "*"
+              - Effect: Allow
+                Action:
+                  - ecs:*
+                Resource:
+                  - "*"
 
   ReUser:
     Type: AWS::IAM::User

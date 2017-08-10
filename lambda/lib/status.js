@@ -19,7 +19,7 @@ module.exports.update = (status, description, build) => {
       ghpr.commits(
         (err, commits, head) => {
           if (err) {
-            console.log("==> unable to fetch commits", err)
+            console.log("==> unable to fetch commits", JSON.stringify(err))
             reject(err)
           } else {
             console.log("==> commits", JSON.stringify(commits))
@@ -31,7 +31,7 @@ module.exports.update = (status, description, build) => {
               }, 
               (err, data, headers) => {
                 if (err) {
-                  console.log("==> unable to update status", err)
+                  console.log("==> unable to update status", JSON.stringify(err))
                   reject(err)
                 } else {
                   accept(data)
@@ -45,7 +45,7 @@ module.exports.update = (status, description, build) => {
       ghrepo.commit(build.sourceVersion,
         (err, commit, head) => {
           if (err) {
-            console.log("==> unable to fetch commits", err)
+            console.log("==> unable to fetch commits", JSON.stringify(err))
             reject(err)
           } else {
             console.log("==> commit", JSON.stringify(commit))
@@ -56,11 +56,11 @@ module.exports.update = (status, description, build) => {
               var ghpr = client.issue(repo, pr)
               ghpr.createComment(
                 {
-                  'body': '[' + status + '](' + url + '): ' + description
+                  'body': description + ': [' + status + '](' + url + ')'
                 },
                 (err, data, headers) => {
                   if (err) {
-                    console.log("==> unable to update status", err)
+                    console.log("==> unable to update status", JSON.stringify(err))
                     reject(err)
                   } else {
                     accept(data)
