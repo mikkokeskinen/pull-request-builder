@@ -74,13 +74,18 @@ Resources:
                   - Ref: ReTopic
               - Effect: Allow
                 Action:
+                  - "ecr:GetDownloadUrlForLayer"
+                  - "ecr:BatchGetImage"
                   - "ecr:BatchCheckLayerAvailability"
-                  - "ecr:CompleteLayerUpload"
-                  - "ecr:GetAuthorizationToken"
-                  - "ecr:InitiateLayerUpload"
+
                   - "ecr:PutImage"
+                  - "ecr:InitiateLayerUpload"
                   - "ecr:UploadLayerPart"
+                  - "ecr:CompleteLayerUpload"
+
+                  - "ecr:GetAuthorizationToken"
                   - "ecr:CreateRepository"
+                  - "ecr:SetRepositoryPolicy"
                 Resource: 
                   - "*"
               - Effect: Allow
