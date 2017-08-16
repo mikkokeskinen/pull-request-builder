@@ -20,11 +20,14 @@ Outputs:
       - ReAccessKey
       - SecretAccessKey
     Description: The IAM AccessSecretKey
-  SNSTopic:
-    Value:
-      Ref: ReTopic
   AwsRegion:
     Value: !Ref "AWS::Region"
+  SNSTopic:
+    Value: 
+      Ref: ReTopic
+  GitHubToken:
+    Value: 
+      Ref: GithubToken
 
 
 Resources:
@@ -77,6 +80,7 @@ Resources:
                   - "ecr:InitiateLayerUpload"
                   - "ecr:PutImage"
                   - "ecr:UploadLayerPart"
+                  - "ecr:CreateRepository"
                 Resource: 
                   - "*"
               - Effect: Allow
