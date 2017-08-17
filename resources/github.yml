@@ -27,6 +27,7 @@ Resources:
       Environment:
         Type: linuxContainer
         ComputeType: BUILD_GENERAL1_SMALL
+        PrivilegedMode: true
         Image: 
           Ref: CodeBuildImage
       Source:
