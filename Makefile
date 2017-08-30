@@ -36,11 +36,11 @@ patch:
 
 hook:
 	@echo "==> install hook to ${GITHUB_REPO} using toolkit ${CODE_BUILD_TK}" ;\
-	K=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`AccessKeyId\`] | [0].OutputValue' --output json | xargs echo | sed -e "s/\r//g"` ;\
-	S=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`SecretAccessKey\`] | [0].OutputValue' --output json | xargs echo | sed -e "s/\r//g"` ;\
-	A=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`SNSTopic\`] | [0].OutputValue' --output json | xargs echo | sed -e "s/\r//g"` ;\
-	R=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`AwsRegion\`] | [0].OutputValue' --output json | xargs echo | sed -e "s/\r//g"` ;\
-	T=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`GitHubToken\`] | [0].OutputValue' --output json | xargs echo | sed -e "s/\r//g"` ;\
+	K=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`AccessKeyId\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
+	S=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`SecretAccessKey\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
+	A=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`SNSTopic\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
+	R=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`AwsRegion\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
+	T=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`GitHubToken\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
 	curl -XPOST -H "Authorization: token $$T" https://api.github.com/repos/${GITHUB_REPO}/hooks -H 'Content-Type: application/json' -d "{\"name\": \"amazonsns\", \"config\": {\"aws_key\": \"$$K\", \"aws_secret\": \"$$S\", \"sns_region\": \"$$R\", \"sns_topic\": \"$$A\"}, \"events\": [\"pull_request\", \"push\"], \"active\": true}" ;\
 	aws cloudformation create-stack \
 		--stack-name ${AWS_CODE_BUILD} \
