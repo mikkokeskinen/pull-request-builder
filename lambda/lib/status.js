@@ -19,7 +19,7 @@ module.exports.update = (status, description, build) => {
       ghpr.commits(
         (err, commits, head) => {
           if (err) {
-            console.log("==> unable to fetch commits", JSON.stringify(err))
+            console.log("==> unable to fetch commits", JSON.stringify({repo: repo, pr: pr, error: err}))
             reject(err)
           } else {
             console.log("==> commits", JSON.stringify(commits))
@@ -45,7 +45,7 @@ module.exports.update = (status, description, build) => {
       ghrepo.commit(build.sourceVersion,
         (err, commit, head) => {
           if (err) {
-            console.log("==> unable to fetch commits", JSON.stringify(err))
+            console.log("==> unable to fetch commits", JSON.stringify({repo: repo, version: build.sourceVersion, error: err}))
             reject(err)
           } else {
             console.log("==> commit", JSON.stringify(commit))

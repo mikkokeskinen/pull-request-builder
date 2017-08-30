@@ -4,6 +4,7 @@ STACK         ?= ci-cd
 GITHUB_TOKEN  ?=
 GITHUB_REPO   ?=
 CODE_BUILD_TK ?= aws/codebuild/docker:1.12.1
+CODE_BUILD_TIMEOUT ?= 10
 
 AWS_CODE_BUILD ?= $(subst /,-,$(GITHUB_REPO))
 
@@ -46,6 +47,7 @@ hook:
 		--parameters \
 			ParameterKey=GithubRepo,ParameterValue=https://github.com/${GITHUB_REPO} \
 			ParameterKey=CodeBuildImage,ParameterValue=${CODE_BUILD_TK} \
+			ParameterKey=CodeBuildTimeout,ParameterValue=${CODE_BUILD_TIMEOUT} \
 		--template-body file://./resources/github.yml \
 		--capabilities CAPABILITY_IAM \
 		--capabilities CAPABILITY_NAMED_IAM && \

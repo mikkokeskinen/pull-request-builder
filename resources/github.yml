@@ -14,6 +14,11 @@ Parameters:
     Type: String
     Default: aws/codebuild/docker:1.12.1
 
+  CodeBuildTimeout:
+    Description: Duration of build process in minutes
+    Type: Number
+    Default: 10
+
 Resources:
 
   ReCodeBuildProject:
@@ -31,7 +36,6 @@ Resources:
         Image: 
           Ref: CodeBuildImage
       Source:
-        Location: 
-          Ref: GithubRepo
+        Location: !Sub ${GithubRepo}
         Type: GITHUB
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: !Sub ${CodeBuildTimeout}
