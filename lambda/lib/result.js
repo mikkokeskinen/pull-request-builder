@@ -33,14 +33,14 @@ function greenStatus (buildId) {
 
 
 
-module.exports.run = (buildId) => {
+module.exports.run = (buildId, comment) => {
   return promiseRetry(function (retry, number) {
     console.log('attempt number', number);
     return greenStatus(buildId)
       .catch(retry);
   }).then(function (build) {
       const buildStatus = statuses[build.buildStatus]
-      return status.update(buildStatus, '**ci/cd**', build)
+      return status.update(buildStatus, '**ci/cd**', build, comment)
     }, function (err) {
       return err
     })

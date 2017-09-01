@@ -1,7 +1,7 @@
 const github = require('octonode')
 
 
-module.exports.update = (status, description, build) => {
+module.exports.update = (status, description, build, text) => {
 
   const repo   = build.source.location.replace('https://github.com/', '')
   const url    = `https://console.aws.amazon.com/codebuild/home?region=${process.env.AWS_REGION}#/builds/${build.id}/view/new`
@@ -56,7 +56,7 @@ module.exports.update = (status, description, build) => {
               var ghpr = client.issue(repo, pr)
               ghpr.createComment(
                 {
-                  'body': description + ': [' + status + '](' + url + ')'
+                  'body': description + ': [' + status + '](' + url + ')\n\n' + text
                 },
                 (err, data, headers) => {
                   if (err) {
