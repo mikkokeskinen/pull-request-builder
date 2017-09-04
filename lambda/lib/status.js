@@ -1,4 +1,8 @@
+const monad  = require('./monad')
+require('./Function.prototype.$_')
+
 const github = require('octonode')
+const GitHub = require('octocat')
 
 
 module.exports.update = (status, description, build, text) => {
@@ -7,7 +11,9 @@ module.exports.update = (status, description, build, text) => {
   const url    = `https://console.aws.amazon.com/codebuild/home?region=${process.env.AWS_REGION}#/builds/${build.id}/view/new`
   const client = github.client(process.env.GITHUB_TOKEN)
   const ghrepo = client.repo(repo)
-  
+  const ghapi  = new GitHub({token: process.env.GITHUB_TOKEN})
+
+
   return new Promise((accept, reject) => {
     console.log("\n\n ====== github status ======= \n\n")
 
@@ -23,21 +29,29 @@ module.exports.update = (status, description, build, text) => {
             reject(err)
           } else {
             console.log("==> commits", JSON.stringify(commits))
-            ghrepo.status(commits[commits.length - 1].sha, 
-              {
-                "state": status,
-                "target_url": url,
-                "description": description
-              }, 
-              (err, data, headers) => {
-                if (err) {
-                  console.log("==> unable to update status", JSON.stringify(err))
-                  reject(err)
-                } else {
-                  accept(data)
-                }
-              }
-            )
+            var sha = commits[commits.length - 1].sha
+            var req = {
+              "state": status,
+              "target_url": url,
+              "description": description
+            }
+
+            ghapi
+              .repo(repo)
+              .createStatus(sha, req)
+              .then(accept)
+              .catch(reject)
+
+            // ghrepo.status(sha, req, 
+            //   (err, data, headers) => {
+            //     if (err) {
+            //       console.log("==> unable to update status", JSON.stringify(err))
+            //       reject(err)
+            //     } else {
+            //       accept(data)
+            //     }
+            //   }
+            // )
           }
         }
       )
