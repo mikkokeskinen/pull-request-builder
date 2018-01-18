@@ -194,3 +194,59 @@ Resources:
         - ReLambda
         - Arn
 
+  CodeBuildPrivateKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description:
+        The KMS key to encrypt/decrypt sensitive information
+      KeyPolicy:
+        Id: ci-cd-private-key-policy
+        Version: 2012-10-17
+        Statement:
+        - Sid: Allow access for Key Administrators
+          Effect: Allow
+          Principal:
+            AWS:
+            - !Sub arn:aws:iam::${AWS::AccountId}:role/SAML-User
+          Action:
+            - "kms:Create*"
+            - "kms:Describe*"
+            - "kms:Enable*"
+            - "kms:List*"
+            - "kms:Put*"
+            - "kms:Update*"
+            - "kms:Revoke*"
+            - "kms:Disable*"
+            - "kms:Get*"
+            - "kms:Delete*"
+            - "kms:TagResource"
+            - "kms:UntagResource"
+            - "kms:ScheduleKeyDeletion"
+            - "kms:CancelKeyDeletion"
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:ReEncrypt*"
+            - "kms:GenerateDataKey*"
+            - "kms:DescribeKey"
+          Resource: "*"
+
+        - Sid: Allow use of the key
+          Effect: Allow
+          Principal:
+            AWS:
+            - !Sub arn:aws:iam::${AWS::AccountId}:role/ci-cd
+          Action:
+            - "kms:Encrypt"
+            - "kms:Decrypt"
+            - "kms:ReEncrypt*"
+            - "kms:GenerateDataKey*"
+            - "kms:DescribeKey"
+          Resource: "*"
+
+
+  CodeBuildPrivateKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: ci-cd/codebuild-private-key
+      TargetKeyId:
+        Ref: CodeBuildPrivateKey
