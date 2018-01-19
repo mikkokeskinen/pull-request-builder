@@ -89,6 +89,8 @@ Resources:
                   - "ecr:GetAuthorizationToken"
                   - "ecr:CreateRepository"
                   - "ecr:SetRepositoryPolicy"
+
+                  - "kms:Decrypt"
                 Resource: 
                   - "*"
 
@@ -247,6 +249,6 @@ Resources:
   CodeBuildPrivateKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
-      AliasName: ci-cd/codebuild-private-key
+      AliasName: alias/ci-cd-private-key
       TargetKeyId:
         Ref: CodeBuildPrivateKey
