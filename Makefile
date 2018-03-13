@@ -5,6 +5,7 @@ GITHUB_TOKEN  ?=
 GITHUB_REPO   ?=
 CODE_BUILD_TK ?= aws/codebuild/docker:1.12.1
 CODE_BUILD_TIMEOUT ?= 10
+CODE_BUILD_WEEKLY_BUILDS ?= DISABLED
 
 AWS_CODE_BUILD ?= $(subst /,-,$(GITHUB_REPO))
 
@@ -48,6 +49,7 @@ hook:
 			ParameterKey=GithubRepo,ParameterValue=https://github.com/${GITHUB_REPO} \
 			ParameterKey=CodeBuildImage,ParameterValue=${CODE_BUILD_TK} \
 			ParameterKey=CodeBuildTimeout,ParameterValue=${CODE_BUILD_TIMEOUT} \
+			ParameterKey=CodeBuildWeeklyBuildsRule,ParameterValue=${CODE_BUILD_WEEKLY_BUILDS} \
 		--template-body file://./resources/github.yml \
 		--capabilities CAPABILITY_IAM \
 		--capabilities CAPABILITY_NAMED_IAM && \

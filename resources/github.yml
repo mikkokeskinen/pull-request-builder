@@ -19,6 +19,11 @@ Parameters:
     Type: Number
     Default: 10
 
+  CodeBuildWeeklyBuildsRule:
+    Description: Whether to enable periodic builds for this project
+    Type: String
+    Default: DISABLED
+
 Resources:
 
   ReCodeBuildProject:
@@ -33,9 +38,21 @@ Resources:
         Type: linuxContainer
         ComputeType: BUILD_GENERAL1_SMALL
         PrivilegedMode: true
-        Image: 
+        Image:
           Ref: CodeBuildImage
       Source:
         Location: !Sub ${GithubRepo}
         Type: GITHUB
       TimeoutInMinutes: !Sub ${CodeBuildTimeout}
+
+  CloudWatchRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: !Sub CloudWatch event scheduler for ${AWS::StackName}
+      Name: !Sub ${AWS::StackName}-scheduler
+      ScheduleExpression: rate(7 days)
+      State: !Sub ${CodeBuildWeeklyBuildsRule}
+      Targets:
+      - Id: !Sub ${AWS::StackName}-schedule
+        Arn: !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${AWS::StackName}
+        RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/ci-cd-role-lambda
