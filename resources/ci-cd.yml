@@ -158,6 +158,7 @@ Resources:
           Principal:
             Service:
             - lambda.amazonaws.com
+            - events.amazonaws.com
           Action:
           - sts:AssumeRole
       Path: "/"
