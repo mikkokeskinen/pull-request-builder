@@ -19,10 +19,12 @@ Parameters:
     Type: Number
     Default: 10
 
-  CodeBuildWeeklyBuildsRule:
+  CodeBuildSchedule:
     Description: Whether to enable periodic builds for this project
     Type: String
-    Default: DISABLED
+
+Conditions:
+  CreateScheduledBuild: !Not [!Equals [!Ref CodeBuildSchedule, '']]
 
 Resources:
 
@@ -46,12 +48,13 @@ Resources:
       TimeoutInMinutes: !Sub ${CodeBuildTimeout}
 
   CloudWatchRule:
+    Condition: CreateScheduledBuild
     Type: AWS::Events::Rule
     Properties:
       Description: !Sub CloudWatch event scheduler for ${AWS::StackName}
       Name: !Sub ${AWS::StackName}-scheduler
-      ScheduleExpression: rate(7 days)
-      State: !Sub ${CodeBuildWeeklyBuildsRule}
+      ScheduleExpression: !Ref CodeBuildSchedule
+      State: ENABLED
       Targets:
       - Id: !Sub ${AWS::StackName}-schedule
         Arn: !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${AWS::StackName}

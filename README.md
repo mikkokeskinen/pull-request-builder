@@ -24,6 +24,13 @@ $ export GITHUB_PROJECT_NAME='tatums/hello-world'
 $ export GITHUB_TOKEN='1234567890'
 $ export PROJECT_NAME='foo-bar'
 ```
+
+In case you need to set up periodic builds use `CODE_BUILD_SCHEDULE` variable as such
+
+```
+$ export CODE_BUILD_SCHEDULE='cron(0 12 * * ? *)'
+```
+
 #### AWS Cli
 
 This relies on the [aws cli](https://aws.amazon.com/cli/). Make sure you're setup
