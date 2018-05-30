@@ -1,93 +1,67 @@
-## CodeBuild with pull request builder
+# Serverless CI/CD
 
-This will build out all the resources needed to use
+**Check**, **Build** and **Carry** your software to cloud without thinking about servers. 
+
+This will build out all the resources needed to use 
 [AWS codebuild](https://aws.amazon.com/codebuild/) and integrate
 with a github to make a pull request builder.
 
-When a commit is pushed to github.  Github sends a SNS message
+When a commit is pushed to github.  Github sends a webhook
 which then invokes the Lambda. The lambda will update github
 via the status api and set the status to pending. The last step
 of codebuild will invoke the lambda again to report the build result.
 
-Cloudformation will output the keys and SNS ARN needed for the
-github AWS SNS integration.
+
+## Key features
+
+The project implements lightweight CI/CD pipelines using **AWS CodeBuild**. These pipelines are
+integrated with public/private repositories on **GitHub**. Pipelines specifications are
+**co-allocated with code** and kept in the same repository as code, using [build specification](https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html). Therefore, it always
+produces repeatable builds.
+
+This solution is optimal if your team uses [forking workflow](doc/workflow.md) to manage software repositories. However, you can still use and configure if your teams uses other workflows.
+
+* **check** validity of every commit associated with pull request, the pipeline is suitable for testing, style checks, etc.
+* **build** deployable artifacts from every pull request and validate them at staging/development environments, the pipeline orchestrates assembly of docker images and they deployments to non-production environments. 
+* **carry** artifacts to production environment.
+
+This repository allows you to forget about house keeping and administration of Jenkins or similar systems.
 
 
-## Setup
+## Getting started
 
-### Requirements
+The latest version of serverless CI/CD is available at `master` branch. All development, including new features and bug fixes, take place on the master branch using forking and pull requests. The project do not supply any pre-build releases, you have to [setup and configure](doc/setup.md) everything by yourself. 
 
-#### ENV Varialbes
+You can enable pipelines for your repositories once the serverless CI/CD is [configured](doc/setup.md) at you AWS Account. The pipelines are executed by CodeBuild and triggered by GitHub using webhooks. The project provides a helper script that automates integration with CI/CD per GitHub repository.
 
-```
-$ export GITHUB_PROJECT_NAME='tatums/hello-world'
-$ export GITHUB_TOKEN='1234567890'
-$ export PROJECT_NAME='foo-bar'
-```
-
-In case you need to set up periodic builds use `CODE_BUILD_SCHEDULE` variable as such
-
-```
-$ export CODE_BUILD_SCHEDULE='cron(0 12 * * ? *)'
-```
-
-#### AWS Cli
-
-This relies on the [aws cli](https://aws.amazon.com/cli/). Make sure you're setup
-
-#### [Setup resources](./resources/README.md)
+Run the following command, to create all necessary elements 
 ```bash
-$ ./resources/create
+make hook GITHUB_REPO=:org/:repo CODE_BUILD_TK=:docker/:image TIMEOUT=:sec
+```
+You might automate a build (e.g. nightly builds) using `CODE_BUILD_SCHEDULE` variable
+
+```bash
+make hook ... CODE_BUILD_SCHEDULE='cron(0 12 * * ? *)'
 ```
 
-This will create the following resources in AWS
+Finally, you need to setup `checkspec.yml`, `buildspec.yml` and `carryspec.yml` in your project, they defines a sequence of actions taken by CodeBuild pipelines. See [CodeBuild manual](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)
 
-* CodeBuild Project
-* SNS Topic
-* Lambda
-* IAM user with keys (for the github integration)
-
-### Deploy the lambda
-```
-$ cd lambda
-$ npm install && npm run deploy
-```
-
-
-### Setup Github's Amazon SNS integration
-In the github project, setup the service/integration `Amazon SNS` and provide the required info.
-
-You can pull the info using a script `$ ./resources/find_keys`
-
-![github setup](./gh-setup.png "Github integration setup")
-
-### in your project you'll need to setup a `buildspec.yml` file.
-
-[CodeBuild buildspec docs](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)
-
-Notice that you'll need to trigger a SNS call in the post_build step.
-
+Notice that you'll need to trigger a webhook call in the post_build step.
 
 ```YAML
 version: 0.1
 
-environment_variables:
-  plaintext:
-    SNS_TOPIC_ARN: arn:aws:sns:us-east-1:012345678902:pull-request-builder
-
 phases:
   install:
     commands:
-      - echo Nothing to do in the install phase...
+      - echo "==> install"
   pre_build:
     commands:
-      - npm install
+      - echo "==> pre-build"
   build:
     commands:
-      - echo Build started on `date`
-      - npm test
+      - echo "==> testing"
   post_build:
     commands:
-      - echo Build completed on `date`
-      - 'aws sns publish --topic-arn arn:aws:sns:us-east-1:012345678902:pull-request-builder --message "{\"buildId\": \"$CODEBUILD_BUILD_ID\"}"'
+       - 'curl -XPOST https://your-api-id.execute-api.eu-west-1.amazonaws.com/webhook -d "{\"build\": \"$CODEBUILD_BUILD_ID\"}"'
 ```

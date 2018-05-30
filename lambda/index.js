@@ -1,58 +1,34 @@
-'use strict';
+// @doc
+//   Serverless CI/CD with AWS Code Build
+//
+//   see 
+//   * https://developer.github.com/webhooks/
+import { fetchBuild } from './lib/codebuild'
 
-
-const result = require('./lib/result')
-const build = require('./lib/build')
+import * as checkspec from './lib/checkspec'
+import * as buildspec from './lib/buildspec'
+import * as carryspec from './lib/carryspec'
 
 //
-// Builder Supports
-//  - Pull Request (checkspec.yml)
-//  - Head / Merge (buildspec.yml)  
-
-const is_pull_request = (json) => (
-  (json.pull_request && (json.action == 'opened' || json.action == 'synchronize'))
-)
-
-const is_head = (json) => (
-  (json.ref && json.after)
-)
-
-const is_code_build = (json) => (
-  (typeof json.buildId !== 'undefined')
-)
-
-exports.handler = (event, context, callback) => {
-
-  const message = JSON.parse(event.Records[0].Sns.Message)
-
+//
+export const handler = async json => {
   console.log("\n\n ====== ci/cd action ======= \n\n")
-  console.log("\n\n", JSON.stringify(message), "\n\n");
+  console.log("\n\n", JSON.stringify(json), "\n\n")
 
-  if (message) 
-  {
-    if (is_pull_request(message)) {
-      console.log("\n\n ====== pull request builder ======= \n\n")
-      build
-        .pull_request(message.repository.full_name, 'pr/' + message.pull_request.number)
-        .then(x => {callback(null, x)})
-        .catch(err => {callback(err, null)})
-
-    } else if (is_head(message)) {
-      console.log("\n\n ====== code pipeline builder ======= \n\n")
-      build
-        .commit(message.repository.full_name, message.after)
-        .then(x => {callback(null, x)})
-        .catch(err => {callback(err, null)})
-
-    } else if (is_code_build(message)) {
-      console.log("\n\n ====== build reporting ======= \n\n")
-      const comment = typeof message.comment !== 'undefined' ? message.comment : ''
-      result
-        .run(message.buildId, comment)
-        .then(x => {callback(null, x)})
-        .catch(err => {callback(err, null)})
+  try {
+    if (typeof json.build !== 'undefined') {
+      const build = await fetchBuild(json.build)
+      console.log("==> build completed", JSON.stringify(build))
+      await checkspec.after(build)
+      await buildspec.after(build)
+      await carryspec.after(build)
     } else {
-      console.log("\n\n ====== unknown action ======= \n\n")
+      await checkspec.before(json)
+      await buildspec.before(json)
+      await carryspec.before(json)
     }
+  } catch (e) {
+    console.error("== ci/cd failed ==>", e)
   }
 }
+

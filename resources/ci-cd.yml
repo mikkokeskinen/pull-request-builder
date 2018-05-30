@@ -5,29 +5,20 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Serverless CI/CD resources
 
 Parameters:
+  Artifact:
+    Description: CI/CD artifcat storage
+    Type: String
+
   GithubToken:
     Description: Github api token
     Type: String
 
 Outputs:
-  AccessKeyId:
-    Value:
-      Ref: ReAccessKey
-    Description: The IAM AccessKeyId
-  SecretAccessKey:
-    Value:
-      Fn::GetAtt:
-      - ReAccessKey
-      - SecretAccessKey
-    Description: The IAM AccessSecretKey
-  AwsRegion:
-    Value: !Ref "AWS::Region"
-  SNSTopic:
-    Value: 
-      Ref: ReTopic
   GitHubToken:
     Value: 
       Ref: GithubToken
+  WebHook:
+    Value: !Sub https://${WebHookApi}.execute-api.${AWS::Region}.amazonaws.com/webhook
 
 
 Resources:
@@ -42,7 +33,7 @@ Resources:
   ReCodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ci-cd
+      RoleName: !Sub ${AWS::StackName}-ci-cd
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -59,7 +50,7 @@ Resources:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceFullAccess"
         - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
       Policies:
-        - PolicyName: codebuild-policy
+        - PolicyName: !Sub ${AWS::StackName}-codebuild-policy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -70,11 +61,6 @@ Resources:
                   - logs:PutLogEvents
                 Resource:
                   - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
-              - Effect: Allow
-                Action:
-                  - sns:*
-                Resource:
-                  - Ref: ReTopic
               - Effect: Allow
                 Action:
                   - "ecr:GetDownloadUrlForLayer"
@@ -94,41 +80,6 @@ Resources:
                 Resource: 
                   - "*"
 
-  ReUser:
-    Type: AWS::IAM::User
-    Properties:
-      UserName: !Sub ${AWS::StackName}-user
-      Path: "/"
-      Policies:
-      - PolicyName:
-          !Sub ${AWS::StackName}-policy
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-          - Action:
-            - sns:Publish
-            Effect: Allow
-            Resource:
-              Ref: ReTopic
-
-  ReAccessKey:
-    Type: AWS::IAM::AccessKey
-    Properties:
-      UserName:
-        Ref: ReUser
-
-  ReTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      DisplayName: !Sub ${AWS::StackName}
-      TopicName: !Sub ${AWS::StackName}
-      Subscription:
-      - Endpoint:
-          Fn::GetAtt:
-            - ReLambda
-            - Arn
-        Protocol: lambda
-
   ReLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -136,13 +87,12 @@ Resources:
       Handler: index.handler
       Role: !GetAtt [IamRoleLambda, Arn]
       Code:
-        ZipFile:
-          exports.handler = function(event, context, cb) { return cb(null, {message:'Hello World'}); };
+        S3Bucket: !Sub ${Artifact}
+        S3Key: ci-cd/package.zip
       Environment:
         Variables:
-          GITHUB_TOKEN:
-            Ref: GithubToken
-      Runtime: nodejs4.3
+          GITHUB_TOKEN: !Sub ${GithubToken}
+      Runtime: nodejs8.10
       MemorySize: 1024
       Timeout: 30
 
@@ -185,17 +135,78 @@ Resources:
       Roles:
       - Ref: IamRoleLambda
 
+  WebHookApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub ${AWS::StackName}-webhook-api
+      Description: WebHook API for CI/CD
+      FailOnWarnings: true
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Body:
+        swagger: "2.0"
+        info:
+          version: "2018-05-28T10:11:59Z"
+          title: "WebHook CI/CD"
+        basePath: "/webhook"
+        schemes:
+          - "https"
+        paths:
+          /:
+            post:
+              produces:
+                - "application/json"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                uri: 
+                  Fn::Join:
+                    - ""
+                    -
+                      - !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/"
+                      - Fn::GetAtt:
+                        - ReLambda
+                        - Arn
+                      - "/invocations"
+                responses:
+                  default:
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                contentHandling: "CONVERT_TO_TEXT"
+                type: "aws"
+        definitions:
+          Empty:
+            type: "object"
+            title: "Empty Schema"
+
+  WebHookDeployment: 
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref WebHookApi
+      StageName: webhook
+
   ReLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      Principal: sns.amazonaws.com
+      Principal: apigateway.amazonaws.com
       SourceArn:
-        Ref: ReTopic
+        Fn::Join: 
+          - "" 
+          -
+            - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:"
+            - !Ref WebHookApi
+            - "/*"
       FunctionName:
         Fn::GetAtt:
         - ReLambda
         - Arn
+
 
   CodeBuildPrivateKey:
     Type: AWS::KMS::Key
@@ -203,7 +214,7 @@ Resources:
       Description:
         The KMS key to encrypt/decrypt sensitive information
       KeyPolicy:
-        Id: ci-cd-private-key-policy
+        Id: ${AWS::StackName}-private-key-policy
         Version: 2012-10-17
         Statement:
         - Sid: Allow access for Key Administrators
@@ -246,10 +257,10 @@ Resources:
             - "kms:DescribeKey"
           Resource: "*"
 
-
   CodeBuildPrivateKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
-      AliasName: alias/ci-cd-private-key
+      AliasName: !Sub alias/${AWS::StackName}-private-key
       TargetKeyId:
         Ref: CodeBuildPrivateKey
+

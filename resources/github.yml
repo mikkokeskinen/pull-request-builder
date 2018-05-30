@@ -5,8 +5,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: GitHub CodeBuild
 
 Parameters:
+  CICD:
+    Description: Reference to CI/CD Stack
+    Type: String
+
   GithubRepo:
-    Description: Github repository, absolute url (e.g. https://github.com/:user/:repo)
+    Description: Github repository, absolute url (e.g. https://github.com/:org/:repo)
     Type: String
 
   CodeBuildImage:
@@ -58,4 +62,4 @@ Resources:
       Targets:
       - Id: !Sub ${AWS::StackName}-schedule
         Arn: !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${AWS::StackName}
-        RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/ci-cd-role-lambda
+        RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/${CICD}-role-lambda
