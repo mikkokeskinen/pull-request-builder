@@ -8,8 +8,8 @@ The *official repository* contains a single protected `master` branch. The `mast
 The work flow is illustrated on the following diagram
 
 ```
-Official Repository
-                                                 merge         tag
+Official Repository                                           tag
+                                                 merge       x.x.x
   master  -----------------------------------------*-----------*--------------
            \                                      / \           \
             \                          check     /   \  build    \  carry

@@ -7,6 +7,7 @@ STORAGE       ?=
 GITHUB_REPO   ?=
 CODE_BUILD_TK ?= aws/codebuild/docker:1.12.1
 CODE_BUILD_TIMEOUT ?= 10
+CODE_BUILD_SCHEDULE ?=
 
 AWS_CODE_BUILD ?= $(subst /,-,$(GITHUB_REPO))
 
@@ -63,9 +64,11 @@ hook:
 	aws cloudformation create-stack \
 		--stack-name ${AWS_CODE_BUILD} \
 		--parameters \
+			ParameterKey=CICD,ParameterValue=${STACK} \
 			ParameterKey=GithubRepo,ParameterValue=https://github.com/${GITHUB_REPO} \
 			ParameterKey=CodeBuildImage,ParameterValue=${CODE_BUILD_TK} \
 			ParameterKey=CodeBuildTimeout,ParameterValue=${CODE_BUILD_TIMEOUT} \
+			ParameterKey=CodeBuildSchedule,ParameterValue="${CODE_BUILD_SCHEDULE}" \
 		--template-body file://./resources/github.yml \
 		--capabilities CAPABILITY_IAM \
 		--capabilities CAPABILITY_NAMED_IAM && \

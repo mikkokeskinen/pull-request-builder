@@ -21,8 +21,6 @@ produces repeatable builds.
 
 This solution is optimal if your team uses [forking workflow](doc/workflow.md) to manage software repositories. However, you can still use and configure if your teams uses other workflows.
 
-It supports a following pipelines
-
 * **check** validity of every commit associated with pull request, the pipeline is suitable for testing, style checks, etc.
 * **build** deployable artifacts from every pull request and validate them at staging/development environments, the pipeline orchestrates assembly of docker images and they deployments to non-production environments. 
 * **carry** artifacts to production environment.
@@ -39,6 +37,11 @@ You can enable pipelines for your repositories once the serverless CI/CD is [con
 Run the following command, to create all necessary elements 
 ```bash
 make hook GITHUB_REPO=:org/:repo CODE_BUILD_TK=:docker/:image TIMEOUT=:sec
+```
+You might automate a build (e.g. nightly builds) using `CODE_BUILD_SCHEDULE` variable
+
+```bash
+make hook ... CODE_BUILD_SCHEDULE='cron(0 12 * * ? *)'
 ```
 
 Finally, you need to setup `checkspec.yml`, `buildspec.yml` and `carryspec.yml` in your project, they defines a sequence of actions taken by CodeBuild pipelines. See [CodeBuild manual](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)
