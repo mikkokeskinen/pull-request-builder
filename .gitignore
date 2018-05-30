@@ -1,3 +1,4 @@
 *.sublime-*
+*.json
 node_modules/
 package.zip
