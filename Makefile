@@ -3,7 +3,6 @@
 STACK         ?= ci-cd-v2
 ARTIFACT      ?= 
 GITHUB_TOKEN  ?=
-STORAGE       ?= 
 GITHUB_REPO   ?=
 CODE_BUILD_TK ?= aws/codebuild/docker:1.12.1
 CODE_BUILD_TIMEOUT ?= 10
