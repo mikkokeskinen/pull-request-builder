@@ -5,6 +5,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Serverless CI/CD resources
 
 Parameters:
+
   Artifact:
     Description: CI/CD artifcat storage
     Type: String
@@ -33,7 +34,7 @@ Resources:
   ReCodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub ${AWS::StackName}-ci-cd
+      RoleName: !Sub ${AWS::StackName}-role
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -207,9 +208,10 @@ Resources:
         - ReLambda
         - Arn
 
-
   CodeBuildPrivateKey:
     Type: AWS::KMS::Key
+    DependsOn:
+      - ReCodeBuildRole
     Properties:
       Description:
         The KMS key to encrypt/decrypt sensitive information
@@ -221,7 +223,7 @@ Resources:
           Effect: Allow
           Principal:
             AWS:
-            - !Sub arn:aws:iam::${AWS::AccountId}:role/SAML-User
+            - !Sub arn:aws:iam::${AWS::AccountId}:root
           Action:
             - "kms:Create*"
             - "kms:Describe*"
@@ -248,7 +250,7 @@ Resources:
           Effect: Allow
           Principal:
             AWS:
-            - !Sub arn:aws:iam::${AWS::AccountId}:role/ci-cd
+            - !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-role
           Action:
             - "kms:Encrypt"
             - "kms:Decrypt"
