@@ -21,7 +21,7 @@ Parameters:
   CodeBuildTimeout:
     Description: Duration of build process in minutes
     Type: Number
-    Default: 10
+    Default: 30
 
   CodeBuildSchedule:
     Description: Whether to enable periodic builds for this project
