@@ -60,7 +60,7 @@ hook:
 	@echo "==> install hook to ${GITHUB_REPO} using toolkit ${CODE_BUILD_TK}" ;\
 	H=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`WebHook\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
 	T=`aws cloudformation describe-stacks --stack-name ${STACK} --query 'Stacks[0].Outputs[?OutputKey==\`GitHubToken\`] | [0].OutputValue' --output json | xargs echo | sed $$'s/\r//g'` ;\
-	curl -XPOST -H "Authorization: token $$T" https://api.github.com/repos/${GITHUB_REPO}/hooks -H 'Content-Type: application/json' -d "{\"name\": \"web\", \"config\": {\"url\": \"$$H\", \"content_type\": \"json\"}, \"events\": [\"pull_request\", \"create\"], \"active\": true}" ;\
+	curl -XPOST -H "Authorization: token $$T" https://api.github.com/repos/${GITHUB_REPO}/hooks -H 'Content-Type: application/json' -d "{\"name\": \"web\", \"config\": {\"url\": \"$$H\", \"content_type\": \"json\"}, \"events\": [\"pull_request\", \"push\"], \"active\": true}" ;\
 	aws cloudformation create-stack \
 		--stack-name ${AWS_CODE_BUILD} \
 		--parameters \
