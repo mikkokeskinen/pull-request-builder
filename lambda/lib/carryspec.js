@@ -17,7 +17,7 @@ import {
 //
 //
 export const before = async json => (
-  (json.ref && json.ref.startsWith('refs/tags'))
+  (!json.deleted && json.ref && json.ref.startsWith('refs/tags'))
     ? initiate(json)
     : undefined
 )
@@ -25,7 +25,7 @@ export const before = async json => (
 //
 //
 export const after = async json => (
-  (json.source.buildspec === "carryspec.yml")
+  (!json.deleted && json.source.buildspec === "carryspec.yml")
     ? complete(json)
     : undefined
 )
