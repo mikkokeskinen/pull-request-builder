@@ -77,6 +77,8 @@ Resources:
                   - "ecr:CreateRepository"
                   - "ecr:SetRepositoryPolicy"
 
+                  - "batch:RegisterJobDefinition"
+
                   - "kms:Decrypt"
                 Resource: 
                   - "*"
