@@ -41,9 +41,7 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-                - codebuild.us-east-1.amazonaws.com
-                - codebuild.us-west-2.amazonaws.com
-                - codebuild.eu-west-1.amazonaws.com
+                - codebuild.amazonaws.com
             Action:
               - sts:AssumeRole
       Path: "/"
@@ -76,6 +74,10 @@ Resources:
                   - "ecr:GetAuthorizationToken"
                   - "ecr:CreateRepository"
                   - "ecr:SetRepositoryPolicy"
+
+                  - "batch:DeregisterJobDefinition"
+                  - "batch:RegisterJobDefinition"
+                  - "route53:ChangeResourceRecordSets"
 
                   - "kms:Decrypt"
                 Resource: 

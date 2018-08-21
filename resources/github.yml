@@ -37,7 +37,7 @@ Resources:
     Properties:
       Name: !Sub ${AWS::StackName}
       Description: !Sub ${AWS::StackName}
-      ServiceRole: ci-cd
+      ServiceRole: !Sub ${CICD}-role
       Artifacts:
         Type: no_artifacts
       Environment:
