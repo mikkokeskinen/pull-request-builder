@@ -79,6 +79,10 @@ Resources:
                   - "batch:RegisterJobDefinition"
                   - "route53:ChangeResourceRecordSets"
 
+                  - "lambda:CreateFunction"
+                  - "lambda:DeleteFunction"
+                  - "lambda:UpdateFunctionCode"
+
                   - "kms:Decrypt"
                 Resource: 
                   - "*"
