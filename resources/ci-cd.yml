@@ -48,6 +48,7 @@ Resources:
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceFullAccess"
         - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
       Policies:
         - PolicyName: !Sub ${AWS::StackName}-codebuild-policy
           PolicyDocument:
@@ -78,10 +79,6 @@ Resources:
                   - "batch:DeregisterJobDefinition"
                   - "batch:RegisterJobDefinition"
                   - "route53:ChangeResourceRecordSets"
-
-                  - "lambda:CreateFunction"
-                  - "lambda:DeleteFunction"
-                  - "lambda:UpdateFunctionCode"
 
                   - "kms:Decrypt"
                 Resource: 
