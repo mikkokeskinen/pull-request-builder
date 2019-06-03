@@ -79,6 +79,7 @@ Resources:
                   - "batch:RegisterJobDefinition"
                   - "route53:ChangeResourceRecordSets"
 
+                  - "lambda:GetFunction"
                   - "lambda:CreateFunction"
                   - "lambda:DeleteFunction"
                   - "lambda:UpdateFunctionCode"
