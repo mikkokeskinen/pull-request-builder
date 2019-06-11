@@ -63,6 +63,8 @@ Resources:
                   - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
               - Effect: Allow
                 Action:
+                  - "iam:PutRolePolicy"
+                  
                   - "ecr:GetDownloadUrlForLayer"
                   - "ecr:BatchGetImage"
                   - "ecr:BatchCheckLayerAvailability"
