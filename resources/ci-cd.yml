@@ -88,6 +88,42 @@ Resources:
                 Resource: 
                   - "*"
 
+              # Policied to allow deployment of a SAM template
+              - Effect: Allow
+                Action:
+                  - "iam:CreateRole"
+                  - "iam:AttachRolePolicy"
+                  - "iam:DetachRolePolicy"
+                  - "iam:DeleteRole"
+
+                  - "apigateway:OPTIONS"
+                  - "apigateway:GET"
+                  - "apigateway:HEAD"
+                  - "apigateway:POST"
+                  - "apigateway:PUT"
+                  - "apigateway:PATCH"
+                  - "apigateway:DELETE"
+                  - "apigateway:CONNECT"
+                  - "apigateway:TRACE"
+
+                  - "cloudformation:DescribeStacks"
+                  - "cloudformation:DescribeStackEvents"
+                  - "cloudformation:DescribeStackResource"
+                  - "cloudformation:DescribeStackResources"
+                  - "cloudformation:GetTemplate"
+                  - "cloudformation:GetTemplateSummary"
+                  - "cloudformation:CreateStack"
+                  - "cloudformation:UpdateStack"
+                  - "cloudformation:DeleteStack"
+                  - "cloudformation:CreateChangeSet"
+                  - "cloudformation:ExecuteChangeSet"
+                  - "cloudformation:DescribeChangeSet"
+                  - "cloudformation:ListChangeSets"
+                  - "cloudformation:DeleteChangeSet"
+                  - "cloudformation:List*"
+                Resource:
+                  - "*"
+
   ReLambda:
     Type: AWS::Lambda::Function
     Properties:
