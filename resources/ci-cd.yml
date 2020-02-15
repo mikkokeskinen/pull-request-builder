@@ -93,6 +93,7 @@ Resources:
                   - "iam:AttachRolePolicy"
                   - "iam:DetachRolePolicy"
                   - "iam:DeleteRole"
+                  - "iam:ListPolicies"
 
                   - "apigateway:OPTIONS"
                   - "apigateway:GET"
