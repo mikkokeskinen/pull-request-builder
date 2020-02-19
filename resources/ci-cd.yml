@@ -127,10 +127,14 @@ Resources:
                   - "cognito-idp:CreateUserPoolClient"                  
                   - "cognito-idp:UpdateUserPoolClient"
                   - "cognito-idp:DeleteUserPoolClient"
-
-                  - "cloudfront:CreateInvalidation"
                 Resource:
                   - "*"
+
+              - Effect: Allow
+                Action:
+                  - "cloudfront:CreateInvalidation"
+                Resource:
+                  - !Sub arn:aws:cloudfront:${AWS::Region}:${AWS::AccountId}:*
 
   ReLambda:
     Type: AWS::Lambda::Function
