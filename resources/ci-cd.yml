@@ -126,7 +126,9 @@ Resources:
                   - "cognito-idp:DeleteUserPoolDomain"                  
                   - "cognito-idp:CreateUserPoolClient"                  
                   - "cognito-idp:UpdateUserPoolClient"
-                  - "cognito-idp:DeleteUserPoolClient"                  
+                  - "cognito-idp:DeleteUserPoolClient"
+
+                  - "cloudfront:CreateInvalidation"
                 Resource:
                   - "*"
 
