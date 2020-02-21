@@ -122,8 +122,11 @@ Resources:
                   - "cloudformation:List*"
 
                   - "cognito-idp:CreateUserPool"
+                  - "cognito-idp:UpdateUserPool"
+                  
                   - "cognito-idp:CreateUserPoolDomain"                  
                   - "cognito-idp:DeleteUserPoolDomain"                  
+                  
                   - "cognito-idp:CreateUserPoolClient"                  
                   - "cognito-idp:UpdateUserPoolClient"
                   - "cognito-idp:DeleteUserPoolClient"
