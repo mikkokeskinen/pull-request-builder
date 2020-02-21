@@ -125,7 +125,8 @@ Resources:
                   - "cognito-idp:UpdateUserPool"
                   
                   - "cognito-idp:CreateUserPoolDomain"                  
-                  - "cognito-idp:DeleteUserPoolDomain"                  
+                  - "cognito-idp:DeleteUserPoolDomain"
+                  - "cognito-idp:ListTagsForResource"
                   
                   - "cognito-idp:CreateUserPoolClient"                  
                   - "cognito-idp:UpdateUserPoolClient"
