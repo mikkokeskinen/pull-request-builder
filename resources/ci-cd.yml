@@ -135,6 +135,9 @@ Resources:
                   - "cloudfront:CreateInvalidation"
                   - "cloudfront:GetInvalidation"
                   - "cloudfront:ListInvalidations"
+
+                  - "glue:*"
+                  - "athena:*"
                 Resource:
                   - "*"
 
