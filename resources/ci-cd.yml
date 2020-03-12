@@ -94,6 +94,7 @@ Resources:
                   - "iam:DetachRolePolicy"
                   - "iam:DeleteRole"
                   - "iam:ListPolicies"
+                  - "iam:DeleteRolePolicy"
 
                   - "apigateway:OPTIONS"
                   - "apigateway:GET"
@@ -135,6 +136,9 @@ Resources:
                   - "cloudfront:CreateInvalidation"
                   - "cloudfront:GetInvalidation"
                   - "cloudfront:ListInvalidations"
+
+                  - "glue:*"
+                  - "athena:*"
                 Resource:
                   - "*"
 
