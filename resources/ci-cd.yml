@@ -96,6 +96,13 @@ Resources:
                   - "iam:ListPolicies"
                   - "iam:DeleteRolePolicy"
 
+                  - "iam:ListRoleTags"
+                  - "iam:TagRole"
+                  - "iam:UntagRole"
+                  #- "cloudwatch:*"
+                  #- "events:*"
+                  - "logs:*"
+
                   - "apigateway:OPTIONS"
                   - "apigateway:GET"
                   - "apigateway:HEAD"
