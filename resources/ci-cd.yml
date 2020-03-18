@@ -80,6 +80,8 @@ Resources:
 
                   - "batch:DeregisterJobDefinition"
                   - "batch:RegisterJobDefinition"
+                  - "batch:Describe*"
+                  - "batch:List*"
                   - "route53:ChangeResourceRecordSets"
 
                   - "kms:Decrypt"
