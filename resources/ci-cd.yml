@@ -50,6 +50,7 @@ Resources:
         - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
         - "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
         - "arn:aws:iam::aws:policy/AmazonKinesisFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess"
       Policies:
         - PolicyName: !Sub ${AWS::StackName}-codebuild-policy
           PolicyDocument:
