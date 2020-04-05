@@ -145,9 +145,7 @@ Resources:
                   - "cognito-idp:UpdateUserPoolClient"
                   - "cognito-idp:DeleteUserPoolClient"
         
-                  - "cloudfront:CreateInvalidation"
-                  - "cloudfront:GetInvalidation"
-                  - "cloudfront:ListInvalidations"
+                  - "cloudfront:*"
 
                   - "glue:*"
                   - "athena:*"
