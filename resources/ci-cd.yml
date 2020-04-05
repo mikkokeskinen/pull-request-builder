@@ -146,6 +146,7 @@ Resources:
                   - "cognito-idp:DeleteUserPoolClient"
         
                   - "cloudfront:*"
+                  - "route53:*"
 
                   - "glue:*"
                   - "athena:*"
