@@ -134,17 +134,7 @@ Resources:
                   - "cloudformation:DeleteChangeSet"
                   - "cloudformation:List*"
 
-                  - "cognito-idp:CreateUserPool"
-                  - "cognito-idp:UpdateUserPool"
-                  
-                  - "cognito-idp:CreateUserPoolDomain"                  
-                  - "cognito-idp:DeleteUserPoolDomain"
-                  - "cognito-idp:ListTagsForResource"
-                  
-                  - "cognito-idp:CreateUserPoolClient"                  
-                  - "cognito-idp:UpdateUserPoolClient"
-                  - "cognito-idp:DeleteUserPoolClient"
-        
+                  - "cognito-idp:*"
                   - "cloudfront:*"
                   - "route53:*"
 
