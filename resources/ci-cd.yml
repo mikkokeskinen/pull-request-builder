@@ -1,5 +1,5 @@
 ##
-## @doc 
+## @doc
 ##   common resources required for serverless ci/cd
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Serverless CI/CD resources
@@ -16,7 +16,7 @@ Parameters:
 
 Outputs:
   GitHubToken:
-    Value: 
+    Value:
       Ref: GithubToken
   WebHook:
     Value: !Sub https://${WebHookApi}.execute-api.${AWS::Region}.amazonaws.com/webhook
@@ -66,7 +66,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - "iam:PutRolePolicy"
-                  
+
                   - "ecr:GetDownloadUrlForLayer"
                   - "ecr:BatchGetImage"
                   - "ecr:BatchCheckLayerAvailability"
@@ -88,10 +88,10 @@ Resources:
                   - "route53:ChangeResourceRecordSets"
 
                   - "kms:Decrypt"
-                Resource: 
+                Resource:
                   - "*"
 
-              # Policied to allow deployment of a SAM template
+              # Policies to allow deployment of a SAM template
               - Effect: Allow
                 Action:
                   - "iam:CreateRole"
@@ -140,6 +140,21 @@ Resources:
 
                   - "glue:*"
                   - "athena:*"
+
+                  - "ec2:CreateSecurityGroup"
+                  - "ec2:DeleteSecurityGroup"
+                  - "ec2:AuthorizeSecurityGroupEgress"
+                  - "ec2:AuthorizeSecurityGroupIngress"
+                  - "ec2:RevokeSecurityGroupEgress"
+                  - "ec2:RevokeSecurityGroupIngress"
+                  - "ec2:createTags"
+                  - "ec2:deleteTags"
+                  - "rds:CreateDBInstance"
+                  - "rds:DeleteDBInstance"
+                  - "rds:DescribeDBInstances"
+                  - "rds:DescribeDBSubnetGroups"
+                  - "rds:CreateDBSubnetGroup"
+                  - "rds:DeleteDBSubnetGroup"
                 Resource:
                   - "*"
 
@@ -226,7 +241,7 @@ Resources:
                   schema:
                     $ref: "#/definitions/Empty"
               x-amazon-apigateway-integration:
-                uri: 
+                uri:
                   Fn::Join:
                     - ""
                     -
@@ -247,7 +262,7 @@ Resources:
             type: "object"
             title: "Empty Schema"
 
-  WebHookDeployment: 
+  WebHookDeployment:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref WebHookApi
@@ -259,8 +274,8 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: apigateway.amazonaws.com
       SourceArn:
-        Fn::Join: 
-          - "" 
+        Fn::Join:
+          - ""
           -
             - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:"
             - !Ref WebHookApi
